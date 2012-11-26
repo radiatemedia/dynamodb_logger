@@ -5,6 +5,7 @@ require "fog"
 require "dynamodb_logger/version"
 require "dynamodb_logger/formatter"
 require "dynamodb_logger/configuration"
+require "dynamodb_logger/connection"
 
 module DynamodbLogger
   class << self
@@ -27,6 +28,9 @@ module DynamodbLogger
       formatter.primary_key_value = config.primary_key_value
       formatter.timestamp_name = config.timestamp_name
       formatter.server_name = config.server_name
+
+      raise ArgumentError.new("A primary key name is required to be configured")
+      raise ArgumentError.new("A primary key value (as a Proc) is required to be configured")
 
       logger.formatter = formatter
 

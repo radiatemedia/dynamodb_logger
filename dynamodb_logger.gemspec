@@ -16,4 +16,5 @@ Gem::Specification.new do |gem|
   gem.version       = DynamodbLogger::VERSION
 
   gem.add_runtime_dependency "fog", '~>1.7.0'
+  gem.add_development_dependency 'rspec'
 end

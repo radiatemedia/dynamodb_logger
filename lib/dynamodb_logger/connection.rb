@@ -7,7 +7,12 @@ module DynamodbLogger
         @aws_access_key_id = aws_access_key_id
         @aws_secret_access_key = aws_secret_access_key
         @table_name = table_name
+
+        DynamodbLogger::Connection.new
       end
+
+      #enforce use of ::open to create connections
+      protected :new
     end
 
     #it is assumed that the message is a hash
