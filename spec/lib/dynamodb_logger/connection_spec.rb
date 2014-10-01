@@ -4,10 +4,11 @@ describe DynamodbLogger::Connection do
   describe '::open' do
     let(:api_key) {'test_api_key'}
     let(:api_secret) {'test_api_secret'}
+    let(:api_region) {'us-east-1'}
     let(:table_name) {'test_table_name'}
 
     before(:each) do
-      @connection = DynamodbLogger::Connection.open(api_key, api_secret, table_name)
+      @connection = DynamodbLogger::Connection.open(api_key, api_secret, api_region, table_name)
     end
 
     it "should create a new connection object" do
@@ -20,6 +21,10 @@ describe DynamodbLogger::Connection do
 
     it "should initialize the api secret" do
       DynamodbLogger::Connection.aws_secret_access_key.should == api_secret
+    end
+
+    it "should initialize the api region" do
+      DynamodbLogger::Connection.aws_region.should == api_region
     end
 
     it "should initialize the table name" do
@@ -48,7 +53,7 @@ describe DynamodbLogger::Connection do
 
     before(:each) do
       @connection = DynamodbLogger::Connection.send(:new)
-      @raw_connection = mock(Fog::AWS::DynamoDB)
+      @raw_connection = mock(Aws::DynamoDB::Client)
       DynamodbLogger::Connection.table_name = table_name
     end
 
@@ -61,7 +66,10 @@ describe DynamodbLogger::Connection do
 
     it "should put_item to the connection" do
       @connection.should_receive(:raw_connection).and_return(@raw_connection)
-      @raw_connection.should_receive(:put_item).exactly(:once).with(table_name, test_message)
+      @raw_connection.should_receive(:put_item).exactly(:once).with(
+        :table_name => table_name,
+        :item => test_message
+      )
       @connection.write(test_message)
     end
   end

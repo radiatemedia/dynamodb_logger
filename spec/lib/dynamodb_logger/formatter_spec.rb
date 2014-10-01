@@ -28,8 +28,7 @@ describe DynamodbLogger::Formatter do
 
       message.keys.length.should == 1
       message.keys[0].should == 'message'
-      message.values[0].keys[0].should == 'S'
-      message.values[0].values[0].should == test_string
+      message.values[0].should == test_string
     end
 
     it "should use a passed-in hash" do
@@ -42,38 +41,9 @@ describe DynamodbLogger::Formatter do
       message.keys.should include('dog')
       message.keys.should include('count')
 
-      message['dog'].keys.length.should == 1
-      message['dog'].keys[0].should == 'S'
-      message['dog'].values[0].should == 'cat'
+      message['dog'].should == 'cat'
 
-      message['count'].keys.length.should == 1
-      message['count'].keys[0].should == 'N'
-      message['count'].values[0].should == '1'
-    end
-
-    it "should handle numeric types properly" do
-      test_numbers_hash = {:one => 1, :two => 2.0}
-      message = @formatter.message_to_hash test_numbers_hash
-      test_numbers_hash.each do |key, value|
-        subhash = message[key.to_s]
-        subhash.keys.length.should == 1
-        subhash.keys[0].should == 'N'
-        subhash.values[0].should == value.to_s
-      end
-    end
-
-    it "it should handle numeric sets" do
-      sample_hash = {:test => [1,2,3,4,5]}
-      message = @formatter.message_to_hash sample_hash
-      message.values[0].keys[0].should == 'NS'
-      message.values[0].values[0].should be_a(Array)
-    end
-
-    it "it should treat mixed sets as strings" do
-      sample_hash = {:test => [1,2,3,4,5,'six']}
-      message = @formatter.message_to_hash sample_hash
-      message.values[0].keys[0].should == 'SS'
-      message.values[0].values[0].should be_a(Array)
+      message['count'].should == 1
     end
   end
 
@@ -94,32 +64,32 @@ describe DynamodbLogger::Formatter do
     it "should assign the primary key correctly" do
       message = @formatter.call severity, timestamp, progname, test_message
 
-      message[primary_key_name].values[0].should == primary_key.to_s
+      message[primary_key_name].should == primary_key
     end
 
     it "should set the message correctly" do
       hash = @formatter.call severity, timestamp, progname, test_message
-      hash['message'].values[0].should == test_message
+      hash['message'].should == test_message
     end
 
     it "should set the timestamp correctly" do
       hash = @formatter.call severity, timestamp, progname, test_message
-      hash['timestamp'].values[0].should == timestamp.to_f.to_s
+      hash['timestamp'].should == timestamp.to_f
     end
 
     it "should set the severity correctly" do
       hash = @formatter.call severity, timestamp, progname, test_message
-      hash['severity'].values[0].should == severity
+      hash['severity'].should == severity
     end
 
     it "should set the pid correctly" do
       hash = @formatter.call severity, timestamp, progname, test_message
-      hash['pid'].values[0].should == Process.pid.to_s
+      hash['pid'].should == Process.pid
     end
 
     it "should set the server name correctly" do
       hash = @formatter.call severity, timestamp, progname, test_message
-      hash['server_name'].values[0].should == Socket.gethostname
+      hash['server_name'].should == Socket.gethostname
     end
 
     it "should set the progname correctly" do
@@ -127,7 +97,7 @@ describe DynamodbLogger::Formatter do
       hash['progname'].should be_nil
 
       hash = @formatter.call severity, timestamp, 'test', test_message
-      hash['progname'].values[0].should == 'test'
+      hash['progname'].should == 'test'
     end
   end
 end

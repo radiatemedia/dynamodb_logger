@@ -1,5 +1,5 @@
 #libraries
-require "fog"
+require "aws-sdk"
 
 #internal requires
 require "dynamodb_logger/version"
@@ -19,7 +19,7 @@ module DynamodbLogger
 
     #returns a new logger object
     def logger
-      connection = DynamodbLogger::Connection.open(config.aws_access_key_id, config.aws_secret_access_key, config.table_name)
+      connection = DynamodbLogger::Connection.open(config.aws_access_key_id, config.aws_secret_access_key, config.aws_region, config.table_name)
       logger = Logger.new connection
 
       formatter = DynamodbLogger::Formatter.new
