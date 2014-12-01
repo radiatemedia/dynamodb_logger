@@ -17,7 +17,7 @@ module DynamodbLogger
         #make sure our key is valid
         key = key.to_s
         next if key.empty?
-        next if !value || (value.respond_to?(:empty) && value.empty?)
+        next if !value || (value.respond_to?(:empty?) && value.empty?)
 
         #the V2 AWS API handles the typing automatically
 =begin
