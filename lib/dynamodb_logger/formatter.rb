@@ -16,28 +16,10 @@ module DynamodbLogger
 
         #make sure our key is valid
         key = key.to_s
-        next if key.empty?
-        next if !value || (value.respond_to?(:empty?) && value.empty?)
 
-        #the V2 AWS API handles the typing automatically
-=begin
-        cleaned_value = case value
-
-        when Numeric
-          {'N' => value.to_s} #numeric
-        when Array
-          if value.all? {|v| Numeric === v}
-            {'NS' => value.collect {|v| v.to_s}} #numeric set
-          else
-            {'SS' => value.collect {|v| v.to_s}.select {|v| !v.empty?}} #string set
-          end
-        else
-          {'S' => value.to_s} #string
+        if !key.empty? && value && (!value.respond_to?(:empty?) || !value.empty?)
+          cleaned_hash[key] = value
         end
-
-        cleaned_hash[key] = cleaned_value unless cleaned_value.values[0].empty?
-=end
-        cleaned_hash[key] = value
 
         cleaned_hash
       end

@@ -45,6 +45,30 @@ describe DynamodbLogger::Formatter do
 
       message['count'].should == 1
     end
+
+    it "should handle empty keys" do
+      message = @formatter.message_to_hash test_hash.merge('' => '')
+
+      message.should be_a(Hash)
+    end
+
+    it "should handle nil values" do
+      message = @formatter.message_to_hash test_hash.merge('empty' => nil)
+
+      message.should be_a(Hash)
+    end
+
+    it "should handle values that do not respond to empty" do
+      message = @formatter.message_to_hash test_hash.merge('number' => 3)
+
+      message.should be_a(Hash)
+    end
+
+    it "should handle empty values" do
+      message = @formatter.message_to_hash test_hash.merge('empty' => '')
+
+      message.should be_a(Hash)
+    end
   end
 
   describe '#call' do
